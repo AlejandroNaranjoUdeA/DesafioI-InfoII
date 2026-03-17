@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include "tetris.h"
 
 using namespace std;
@@ -15,6 +16,12 @@ int main()
     cin>>alto;
 
     unsigned char **tablero = crearTablero(alto,ancho);
+
+    srand(time(0));
+
+    int pieza = generarPieza();
+
+    cout<<"Pieza generada: "<<pieza<<endl;
 
     imprimirTablero(tablero,alto,ancho);
 

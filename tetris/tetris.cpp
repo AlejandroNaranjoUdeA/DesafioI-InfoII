@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include "tetris.h"
 
 using namespace std;
@@ -40,4 +41,9 @@ void imprimirTablero(unsigned char **tablero,int alto,int ancho){
 
         cout<<endl;
     }
+}
+
+int generarPieza(){
+
+    return rand()%7;
 }
