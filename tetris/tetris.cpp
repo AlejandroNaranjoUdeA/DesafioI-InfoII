@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// ================= TABLERO =================
+// ---------------- TABLERO ----------------
 
 unsigned char** crearTablero(int alto,int ancho){
 
@@ -15,77 +15,46 @@ unsigned char** crearTablero(int alto,int ancho){
         tablero[i] = new unsigned char[bytes];
 
         for(int j=0;j<bytes;j++)
-            tablero[i][j]=0;
+            tablero[i][j] = 0;
     }
 
     return tablero;
 }
 
-void imprimirTablero(unsigned char **tablero,int alto,int ancho){
+void liberarTablero(unsigned char **tablero,int alto){
+    for(int i=0;i<alto;i++)
+        delete[] tablero[i];
 
-    int bytes = ancho/8;
-
-    for(int i=0;i<alto;i++){
-
-        for(int j=0;j<bytes;j++){
-
-            for(int bit=7;bit>=0;bit--){
-
-                if(tablero[i][j] & (1<<bit))
-                    cout<<"#";
-                else
-                    cout<<".";
-            }
-        }
-
-        cout<<endl;
-    }
+    delete[] tablero;
 }
 
-// ================= PIEZAS =================
-
-// I
-unsigned short I[2] = {
-    0b0000111100000000,
-    0b0010001000100010
-};
-
-// O
-unsigned short O[1] = {
-    0b0000011001100000
-};
-
-// T
-unsigned short T[4] = {
-    0b0000011100100000,
-    0b0000001001100010,
-    0b0000001001110000,
-    0b0000001000110010
-};
-
-// ================= FUNCIONES PIEZAS =================
+// ---------------- PIEZAS ----------------
 
 unsigned short obtenerPieza(int tipo,int rot){
 
-    switch(tipo){
-    case 0: return I[rot % 2];
-    case 1: return O[0];
-    case 2: return T[rot % 4];
+    // I
+    if(tipo==0){
+        if(rot%2==0) return 0x0F00;
+        else return 0x2222;
     }
 
-    return O[0];
+    // O
+    if(tipo==1){
+        return 0x6600;
+    }
+
+    // T
+    if(tipo==2){
+        if(rot==0) return 0x0E40;
+        if(rot==1) return 0x4C40;
+        if(rot==2) return 0x4E00;
+        if(rot==3) return 0x4640;
+    }
+
+    return 0;
 }
 
-int numRotaciones(int tipo){
-
-    if(tipo==0) return 2;
-    if(tipo==1) return 1;
-    if(tipo==2) return 4;
-
-    return 1;
-}
-
-// ================= COLISION =================
+// ---------------- COLISION ----------------
 
 bool colision(unsigned char **tablero,int ancho,int alto,
               unsigned short pieza,int x,int y){
@@ -97,17 +66,19 @@ bool colision(unsigned char **tablero,int ancho,int alto,
 
             if(bit){
 
-                int fila = y + i;
-                int col  = x + j;
+                int tx = x + j;
+                int ty = y + i;
 
-                if(fila>=alto || col<0 || col>=ancho)
+                if(tx < 0 || tx >= ancho || ty >= alto)
                     return true;
 
-                int byte = col/8;
-                int bitPos = 7 - (col%8);
+                if(ty >= 0){
+                    int byte = tx/8;
+                    int bitPos = 7 - (tx%8);
 
-                if(tablero[fila][byte] & (1<<bitPos))
-                    return true;
+                    if(tablero[ty][byte] & (1<<bitPos))
+                        return true;
+                }
             }
         }
     }
@@ -115,7 +86,7 @@ bool colision(unsigned char **tablero,int ancho,int alto,
     return false;
 }
 
-// ================= FIJAR PIEZA =================
+// ---------------- FIJAR PIEZA ----------------
 
 void fijarPieza(unsigned char **tablero,
                 unsigned short pieza,int x,int y){
@@ -127,14 +98,55 @@ void fijarPieza(unsigned char **tablero,
 
             if(bit){
 
-                int fila = y+i;
-                int col  = x+j;
+                int tx = x + j;
+                int ty = y + i;
 
-                int byte = col/8;
-                int bitPos = 7 - (col%8);
+                if(ty >= 0){
 
-                tablero[fila][byte] |= (1<<bitPos);
+                    int byte = tx/8;
+                    int bitPos = 7 - (tx%8);
+
+                    tablero[ty][byte] |= (1<<bitPos);
+                }
             }
         }
+    }
+}
+
+// ---------------- IMPRIMIR ----------------
+
+void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
+                      unsigned short pieza,int x,int y){
+
+    for(int i=0;i<alto;i++){
+
+        for(int j=0;j<ancho;j++){
+
+            int ocupado = 0;
+
+            int byte = j/8;
+            int bitPos = 7 - (j%8);
+
+            if(tablero[i][byte] & (1<<bitPos))
+                ocupado = 1;
+
+            // pieza encima
+            for(int pi=0;pi<4;pi++){
+                for(int pj=0;pj<4;pj++){
+
+                    int bit = (pieza >> (15 - (pi*4 + pj))) & 1;
+
+                    if(bit){
+                        if(i == y+pi && j == x+pj)
+                            ocupado = 1;
+                    }
+                }
+            }
+
+            if(ocupado) cout<<"#";
+            else cout<<".";
+        }
+
+        cout<<endl;
     }
 }

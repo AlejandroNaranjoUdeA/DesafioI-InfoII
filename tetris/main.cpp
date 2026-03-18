@@ -7,68 +7,61 @@ using namespace std;
 
 int main(){
 
-    int ancho,alto;
-
-    cout<<"Ancho (multiplo de 8): ";
-    cin>>ancho;
-
-    cout<<"Alto: ";
-    cin>>alto;
+    int alto = 20;
+    int ancho = 16;
 
     unsigned char **tablero = crearTablero(alto,ancho);
 
-    srand(time(0));
-
-    int tipo = rand()%3; // por ahora 3 piezas
+    int tipo = 0;
     int rot = 0;
 
     int x = ancho/2;
     int y = 0;
 
+    char tecla;
+
     while(true){
 
-        system("cls"); // limpiar consola (Windows)
+        system("cls"); // en windows
 
         unsigned short pieza = obtenerPieza(tipo,rot);
 
-        imprimirTablero(tablero,alto,ancho);
+        imprimirConPieza(tablero,alto,ancho,pieza,x,y);
 
-        cout<<"\nControles: a izq | d der | s bajar | w rotar\n";
+        cin >> tecla;
 
-        char c;
-        cin>>c;
-
-        if(c=='a'){
+        if(tecla == 'a'){ // izquierda
             if(!colision(tablero,ancho,alto,pieza,x-1,y))
                 x--;
         }
 
-        if(c=='d'){
+        if(tecla == 'd'){ // derecha
             if(!colision(tablero,ancho,alto,pieza,x+1,y))
                 x++;
         }
 
-        if(c=='s'){
+        if(tecla == 's'){ // bajar
             if(!colision(tablero,ancho,alto,pieza,x,y+1))
                 y++;
             else{
                 fijarPieza(tablero,pieza,x,y);
 
-                tipo = rand()%3;
+                tipo = (tipo+1)%3;
                 rot = 0;
                 x = ancho/2;
                 y = 0;
             }
         }
 
-        if(c=='w'){
-            int nuevaRot = (rot+1)%numRotaciones(tipo);
-
+        if(tecla == 'w'){ // rotar
+            int nuevaRot = (rot+1)%4;
             if(!colision(tablero,ancho,alto,
                           obtenerPieza(tipo,nuevaRot),x,y))
                 rot = nuevaRot;
         }
     }
+
+    liberarTablero(tablero,alto);
 
     return 0;
 }
