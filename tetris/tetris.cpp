@@ -150,3 +150,40 @@ void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
         cout<<endl;
     }
 }
+
+
+void eliminarFilas(unsigned char **tablero,int alto,int ancho){
+
+    int bytes = ancho/8;
+
+    for(int i=0;i<alto;i++){
+
+        bool llena = true;
+
+        // revisar si la fila está llena
+        for(int j=0;j<bytes;j++){
+            if(tablero[i][j] != 255){
+                llena = false;
+                break;
+            }
+        }
+
+        // si está llena
+        if(llena){
+
+            // bajar todas las filas superiores
+            for(int k=i;k>0;k--){
+                for(int j=0;j<bytes;j++){
+                    tablero[k][j] = tablero[k-1][j];
+                }
+            }
+
+            // limpiar la fila de arriba
+            for(int j=0;j<bytes;j++)
+                tablero[0][j] = 0;
+
+            //ojo
+            i--;
+        }
+    }
+}

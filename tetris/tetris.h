@@ -19,4 +19,8 @@ void fijarPieza(unsigned char **tablero,
 void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
                       unsigned short pieza,int x,int y);
 
+// eliminar fila de abajo
+void eliminarFilas(unsigned char **tablero,int alto,int ancho);
+
+
 #endif // TETRIS_H

@@ -46,6 +46,8 @@ int main(){
             else{
                 fijarPieza(tablero,pieza,x,y);
 
+                eliminarFilas(tablero,alto,ancho);
+
                 tipo = (tipo+1)%3;
                 rot = 0;
                 x = ancho/2;
