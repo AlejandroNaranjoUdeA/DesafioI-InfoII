@@ -7,8 +7,15 @@ using namespace std;
 
 int main(){
 
-    int alto = 20;
-    int ancho = 16;
+    int ancho, alto;
+    do{
+        cout << "Ingrese ancho (multiplo de 8): ";
+        cin >> ancho;
+
+        cout << "Ingrese alto: ";
+        cin >> alto;
+
+    } while(ancho < 8 || ancho % 8 != 0 || alto < 8);
 
     unsigned char **tablero = crearTablero(alto,ancho);
 
@@ -54,6 +61,18 @@ int main(){
                 rot = 0;
                 x = ancho/2;
                 y = 0;
+
+                // GAME OVER
+                if(colision(tablero,ancho,alto,
+                             obtenerPieza(tipo,rot),x,y)){
+
+                    system("cls");
+                    imprimirConPieza(tablero,alto,ancho,
+                                     obtenerPieza(tipo,rot),x,y);
+
+                    cout << "\nGAME OVER\n";
+                    break;
+                }
             }
         }
 
