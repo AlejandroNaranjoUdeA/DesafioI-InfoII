@@ -51,6 +51,34 @@ unsigned short obtenerPieza(int tipo,int rot){
         if(rot==3) return 0x4640;
     }
 
+    // S
+    if(tipo==3){
+        if(rot%2==0) return 0x06C0;
+        else return 0x8C40;
+    }
+
+    // Z
+    if(tipo==4){
+        if(rot%2==0) return 0x0C60;
+        else return 0x4C80;
+    }
+
+    // L
+    if(tipo==5){
+        if(rot==0) return 0x0E20;
+        if(rot==1) return 0x44C0;
+        if(rot==2) return 0x8E00;
+        if(rot==3) return 0x6440;
+    }
+
+    // J
+    if(tipo==6){
+        if(rot==0) return 0x0E80;
+        if(rot==1) return 0xC440;
+        if(rot==2) return 0x2E00;
+        if(rot==3) return 0x4460;
+    }
+
     return 0;
 }
 
@@ -113,6 +141,39 @@ void fijarPieza(unsigned char **tablero,
     }
 }
 
+// ---------------- ELIMINAR FILAS ----------------
+
+void eliminarFilas(unsigned char **tablero,int alto,int ancho){
+
+    int bytes = ancho/8;
+
+    for(int i=0;i<alto;i++){
+
+        bool llena = true;
+
+        for(int j=0;j<bytes;j++){
+            if(tablero[i][j] != 255){
+                llena = false;
+                break;
+            }
+        }
+
+        if(llena){
+
+            for(int k=i;k>0;k--){
+                for(int j=0;j<bytes;j++){
+                    tablero[k][j] = tablero[k-1][j];
+                }
+            }
+
+            for(int j=0;j<bytes;j++)
+                tablero[0][j] = 0;
+
+            i--;
+        }
+    }
+}
+
 // ---------------- IMPRIMIR ----------------
 
 void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
@@ -130,7 +191,6 @@ void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
             if(tablero[i][byte] & (1<<bitPos))
                 ocupado = 1;
 
-            // pieza encima
             for(int pi=0;pi<4;pi++){
                 for(int pj=0;pj<4;pj++){
 
@@ -148,42 +208,5 @@ void imprimirConPieza(unsigned char **tablero,int alto,int ancho,
         }
 
         cout<<endl;
-    }
-}
-
-
-void eliminarFilas(unsigned char **tablero,int alto,int ancho){
-
-    int bytes = ancho/8;
-
-    for(int i=0;i<alto;i++){
-
-        bool llena = true;
-
-        // revisar si la fila está llena
-        for(int j=0;j<bytes;j++){
-            if(tablero[i][j] != 255){
-                llena = false;
-                break;
-            }
-        }
-
-        // si está llena
-        if(llena){
-
-            // bajar todas las filas superiores
-            for(int k=i;k>0;k--){
-                for(int j=0;j<bytes;j++){
-                    tablero[k][j] = tablero[k-1][j];
-                }
-            }
-
-            // limpiar la fila de arriba
-            for(int j=0;j<bytes;j++)
-                tablero[0][j] = 0;
-
-            //ojo
-            i--;
-        }
     }
 }

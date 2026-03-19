@@ -12,7 +12,9 @@ int main(){
 
     unsigned char **tablero = crearTablero(alto,ancho);
 
-    int tipo = 0;
+    srand(time(0));
+
+    int tipo = rand()%7;
     int rot = 0;
 
     int x = ancho/2;
@@ -22,7 +24,7 @@ int main(){
 
     while(true){
 
-        system("cls"); // en windows
+        system("cls");
 
         unsigned short pieza = obtenerPieza(tipo,rot);
 
@@ -30,17 +32,17 @@ int main(){
 
         cin >> tecla;
 
-        if(tecla == 'a'){ // izquierda
+        if(tecla == 'a'){
             if(!colision(tablero,ancho,alto,pieza,x-1,y))
                 x--;
         }
 
-        if(tecla == 'd'){ // derecha
+        if(tecla == 'd'){
             if(!colision(tablero,ancho,alto,pieza,x+1,y))
                 x++;
         }
 
-        if(tecla == 's'){ // bajar
+        if(tecla == 's'){
             if(!colision(tablero,ancho,alto,pieza,x,y+1))
                 y++;
             else{
@@ -48,14 +50,14 @@ int main(){
 
                 eliminarFilas(tablero,alto,ancho);
 
-                tipo = (tipo+1)%3;
+                tipo = rand()%7;
                 rot = 0;
                 x = ancho/2;
                 y = 0;
             }
         }
 
-        if(tecla == 'w'){ // rotar
+        if(tecla == 'w'){
             int nuevaRot = (rot+1)%4;
             if(!colision(tablero,ancho,alto,
                           obtenerPieza(tipo,nuevaRot),x,y))
